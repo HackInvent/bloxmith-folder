@@ -1,0 +1,80 @@
+<div class="modal-panel folder-modal" role="dialog" aria-modal="true" aria-labelledby="{{ node_id }}FolderModalTitle" data-folder-modal-root data-block-runtime-refresh="autonomous" data-node-id="{{ node_id }}" data-node-kind="{{ node_kind }}">
+  <div class="modal-header folder-modal-header">
+    <div>
+      <span class="panel-kicker">Bloc {{ node_kind_title }}</span>
+      <h2 id="{{ node_id }}FolderModalTitle">{{ node_title }}</h2>
+      <p class="folder-root-caption" title="{{ configured_path }}">Racine : <strong data-folder-root-label>{{ configured_path }}</strong></p>
+    </div>
+    <div class="modal-actions">
+      <button class="ghost-btn" data-folder-action="refresh" type="button">Rafraîchir</button>
+      <button class="ghost-btn" data-close-block-modal type="button">Fermer</button>
+    </div>
+  </div>
+
+  <div class="folder-modal-tabs" role="tablist" aria-label="Configuration Folder">
+    <button class="folder-tab is-active" data-folder-tab="content" type="button" role="tab" aria-selected="true">Contenu</button>
+    <button class="folder-tab" data-folder-tab="attributes" type="button" role="tab" aria-selected="false">Attributs</button>
+    <button class="folder-tab" data-folder-tab="ports" type="button" role="tab" aria-selected="false">Ports</button>
+  </div>
+
+  <section class="folder-modal-panel is-active" data-folder-panel="content" role="tabpanel">
+    <div class="folder-explorer-toolbar">
+      <button class="ghost-btn" data-folder-action="parent" type="button" disabled>Dossier parent</button>
+      <button class="solid-btn" data-folder-action="choose-files" type="button" disabled>Ajouter des fichiers</button>
+      <input data-folder-upload-input type="file" multiple hidden />
+      <div class="folder-create-control">
+        <input data-folder-new-directory type="text" maxlength="255" autocomplete="off" placeholder="Nouveau dossier" disabled />
+        <button class="ghost-btn" data-folder-action="create-directory" type="button" disabled>Créer</button>
+      </div>
+      <label class="folder-hidden-toggle">
+        <input data-folder-show-hidden type="checkbox" />
+        <span>Fichiers cachés</span>
+      </label>
+    </div>
+
+    <div class="folder-breadcrumbs" data-folder-breadcrumbs aria-label="Chemin courant"></div>
+    <div class="folder-dropzone" data-folder-dropzone tabindex="0">
+      <span>Déposez des fichiers ici</span>
+      <small>Ils seront ajoutés dans le dossier actuellement affiché.</small>
+    </div>
+    <div class="folder-status" data-folder-status aria-live="polite">Chargement du répertoire...</div>
+
+    <div class="folder-list" role="table" aria-label="Contenu du répertoire">
+      <div class="folder-list-head" role="row">
+        <span role="columnheader">Nom</span>
+        <span role="columnheader">Type</span>
+        <span role="columnheader">Taille</span>
+        <span role="columnheader">Modification</span>
+      </div>
+      <div class="folder-list-body" data-folder-list role="rowgroup"></div>
+    </div>
+  </section>
+
+  <section class="folder-modal-panel" data-folder-panel="attributes" role="tabpanel" hidden>
+    <div class="folder-attributes-grid">
+      <section class="ports-editor-section">
+        <div class="ports-editor-header"><span class="group-label">Identité</span></div>
+        {{ title_field_html }}
+      </section>
+      <section class="ports-editor-section">
+        <div class="ports-editor-header"><span class="group-label">Répertoire racine</span></div>
+        {{ path_browser_html }}
+        <div class="inspector-actions">
+          <button class="solid-btn" data-block-apply type="button" disabled>Appliquer</button>
+        </div>
+        <p class="inspector-copy">Cette racine délimite toute navigation et toute écriture de l’explorateur.</p>
+      </section>
+      <section class="ports-editor-section">
+        <div class="ports-editor-header"><span class="group-label">Dernier état</span></div>
+        {{ runtime_html }}
+      </section>
+    </div>
+  </section>
+
+  <section class="folder-modal-panel" data-folder-panel="ports" role="tabpanel" hidden>
+    <section class="ports-editor-section">
+      <div class="ports-editor-header"><span class="group-label">Ports</span></div>
+      {{ ports_html }}
+    </section>
+  </section>
+</div>

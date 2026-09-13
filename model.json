@@ -1,0 +1,34 @@
+{
+  "kind": "folder",
+  "title": "Folder",
+  "ports": {
+    "inputs": [],
+    "outputs": [
+      {
+        "id": 1,
+        "name": "path",
+        "title": "Path",
+        "emits": [
+          "directory/path",
+          "message/*"
+        ],
+        "multiplicity": "many"
+      }
+    ]
+  },
+  "config": {
+    "path": ""
+  },
+  "port_capabilities": {
+    "can_add_inputs": false,
+    "can_add_outputs": false
+  },
+  "runtime": {
+    "initial_state": "ready",
+    "runtime_executable": true,
+    "active_worker": true,
+    "generic_source": true,
+    "file_browser": true,
+    "centralized_executor": "generic"
+  }
+}
