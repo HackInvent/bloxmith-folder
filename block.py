@@ -47,23 +47,6 @@ class FolderBlock(BlockDefinition):
 
     kind = "folder"
 
-    def ui_assets(self, surface: str = "modal") -> list[dict[str, str]]:
-        """Return block-owned assets for modal, inspector, and node-card surfaces."""
-
-        if surface == "modal":
-            return [
-                {"kind": "css", "path": "assets/css/block_modal.css"},
-                {"kind": "js", "path": "assets/js/block_modal.js"},
-            ]
-        if surface == "inspector_panel":
-            return [
-                {"kind": "css", "path": "assets/css/inspector_panel.css"},
-                {"kind": "js", "path": "assets/js/inspector_panel.js"},
-            ]
-        if surface == "node_card":
-            return [{"kind": "css", "path": "assets/css/node_card.css"}]
-        return []
-
     def render_node_card(self, *, node: dict[str, Any], payload: dict[str, Any] | None = None) -> dict[str, Any]:
         """Render the configured directory in the block-owned canvas card."""
 

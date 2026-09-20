@@ -42,6 +42,8 @@ from ui_smoke_common import (  # noqa: E402
     isolated_server,
     wait_for_run_terminal,
 )
+from urllib.parse import quote
+from block_test_packages import install_test_package, release_key, surface_payload
 
 from blocs.folder.block import FolderBlock, FolderBlockError  # noqa: E402
 from bloxsmith_app.block_runtime import BlockRuntimeContext  # noqa: E402
@@ -342,6 +344,11 @@ def test_http_upload_and_runtime_modes() -> None:
     '''TC4/TC6 - Validate generic multipart dispatch and both graph runtimes.'''
 
     with isolated_server() as server:
+        # Les surfaces sont des assets de release : le bundled kind n'en sert aucun.
+        model = install_test_package(server, "folder")
+        key = quote(release_key(model), safe="")
+        served = lambda payload, suffix: next(
+            asset["path"] for asset in payload["assets"] if asset["path"].endswith(suffix))
         root = server.root_dir / "folder-fixture"
         root.mkdir()
         (root / "one.txt").write_text("one", encoding="utf-8")

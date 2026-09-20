@@ -1,14 +1,14 @@
 /** Folder inspector-specific layout. */
-.folder-inspector {
+[data-block-release="folder@0.1.0"] .folder-inspector {
   display: grid;
   gap: 12px;
 }
 
-.folder-inspector .cw-path-browser {
+[data-block-release="folder@0.1.0"] .folder-inspector .cw-path-browser {
   min-width: 0;
 }
 
-.folder-inspector [data-block-apply]:disabled {
+[data-block-release="folder@0.1.0"] .folder-inspector [data-block-apply]:disabled {
   cursor: not-allowed;
   opacity: 0.55;
 }

@@ -6,14 +6,7 @@
  * Created Date: 2026-07-23
  */
 
-(function () {
-  "use strict";
-
-  const registry = (window.CWBlockUiBlocks = window.CWBlockUiBlocks || {});
-  registry.folderInspectorPanel = {
-    /** Keep Folder inspector behavior block-owned without duplicating path-browser logic. */
-    mount(root) {
-      root.dataset.folderInspectorMounted = "true";
-    },
-  };
-})();
+/** Keep Folder inspector behavior block-owned without duplicating path-browser logic. */
+export function mount(root) {
+  root.dataset.folderInspectorMounted = "true";
+}

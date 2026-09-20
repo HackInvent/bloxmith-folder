@@ -1,15 +1,15 @@
 /** Folder node-card content styling; shell geometry remains framework-owned. */
-.folder-node-card {
+[data-block-release="folder@0.1.0"] .folder-node-card {
   display: grid;
   gap: 5px;
   min-width: 0;
 }
 
-.folder-node-card .node-type-icon {
+[data-block-release="folder@0.1.0"] .folder-node-card .node-type-icon {
   color: #9a7410;
 }
 
-.folder-node-card .node-owned-card-preview {
+[data-block-release="folder@0.1.0"] .folder-node-card .node-owned-card-preview {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
