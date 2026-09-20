@@ -142,7 +142,7 @@ class FolderBlock(BlockDefinition):
             if target.exists():
                 raise FolderBlockError("folder_entry_exists")
             target.mkdir()
-            return {"ok": True, "message": f"Dossier créé : {name}", "listing": self._listing(root, self._relative(root, current))}
+            return {"ok": True, "message": f"Folder created: {name}", "listing": self._listing(root, self._relative(root, current))}
         raise FolderBlockError(f"folder_route_unknown:{normalized_route or '-'}")
 
     def handle_ui_upload(
@@ -198,7 +198,7 @@ class FolderBlock(BlockDefinition):
 
         return {
             "ok": True,
-            "message": f"Fichier importé : {safe_name}",
+            "message": f"File imported: {safe_name}",
             "file": {
                 "name": safe_name,
                 "relative_path": self._relative(root, target),

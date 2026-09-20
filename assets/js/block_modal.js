@@ -6,18 +6,18 @@
  * Created Date: 2026-07-23
  */
 const FOLDER_ERROR_MESSAGES = Object.freeze({
-  folder_path_required: "Configurez d’abord un répertoire racine.",
-  folder_not_found: "Le répertoire configuré est introuvable.",
-  folder_path_not_directory: "Le chemin configuré n’est pas un répertoire.",
-  folder_path_outside_root: "Cette opération sortirait du répertoire racine.",
-  folder_symlink_forbidden: "Les liens symboliques ne sont pas accessibles dans cet explorateur.",
-  folder_entry_not_found: "L’élément demandé est introuvable.",
-  folder_entry_not_directory: "L’élément demandé n’est pas un dossier.",
-  folder_entry_name_invalid: "Le nom saisi n’est pas valide.",
-  folder_entry_exists: "Un élément porte déjà ce nom.",
-  folder_upload_too_large: "Le fichier dépasse la limite de 50 Mio.",
-  folder_upload_target_not_file: "La destination de l’import n’est pas un fichier.",
-  folder_upload_action_unknown: "L’action d’import demandée n’est pas prise en charge.",
+  folder_path_required: "Configure a root directory first.",
+  folder_not_found: "The configured directory cannot be found.",
+  folder_path_not_directory: "The configured path is not a directory.",
+  folder_path_outside_root: "This operation would leave the root directory.",
+  folder_symlink_forbidden: "Symbolic links are not reachable in this explorer.",
+  folder_entry_not_found: "The requested item cannot be found.",
+  folder_entry_not_directory: "The requested item is not a folder.",
+  folder_entry_name_invalid: "The name entered is not valid.",
+  folder_entry_exists: "An item already has that name.",
+  folder_upload_too_large: "The file exceeds the 50 MiB limit.",
+  folder_upload_target_not_file: "The import destination is not a file.",
+  folder_upload_action_unknown: "The requested import action is not supported.",
 });
 
 /** Update the explorer status line without replacing the mounted modal. */
@@ -107,7 +107,7 @@ function renderEntries(root, state) {
   if (!entries.length) {
     const empty = document.createElement("div");
     empty.className = "folder-list-empty";
-    empty.textContent = state.entries.length ? "Aucun élément visible." : "Ce dossier est vide.";
+    empty.textContent = state.entries.length ? "Aucun élément visible." : "This folder is empty.";
     mount.append(empty);
     return;
   }
@@ -173,7 +173,7 @@ function applyListing(root, state, payload) {
   }
   renderBreadcrumbs(root, state);
   renderEntries(root, state);
-  const suffix = listing.skipped_symlinks ? ` · ${listing.skipped_symlinks} lien(s) symbolique(s) masqué(s)` : "";
+  const suffix = listing.skipped_symlinks ? ` · ${listing.skipped_symlinks} hidden symbolic link(s)` : "";
   const access = state.writable ? "" : " · lecture seule";
   setStatus(root, `${state.entries.length} élément(s)${suffix}${access}.`);
 }

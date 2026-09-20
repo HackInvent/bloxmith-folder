@@ -128,7 +128,7 @@ def assert_folder_error(callable_value, expected_code: str) -> None:
     try:
         callable_value()
     except FolderBlockError as exc:
-        expect(expected_code in str(exc), f"Erreur Folder attendue: {expected_code}; reçue: {exc}")
+        expect(expected_code in str(exc), f"Expected Folder error: {expected_code}; received: {exc}")
         return
     raise AssertionError(f"FolderBlockError attendu: {expected_code}")
 
@@ -145,20 +145,20 @@ def test_direct_runtime_and_ui() -> None:
         regular_file.write_text("x", encoding="utf-8")
 
         result = block.execute_runtime(direct_context(str(root), base))
-        expect(result.status == "success", "Folder doit réussir avec un dossier existant.")
-        expect(result.outputs[0].value == str(root.resolve()), "Folder doit émettre le chemin absolu.")
-        expect(result.outputs[0].content_type == "directory/path", "Folder doit émettre directory/path.")
+        expect(result.status == "success", "Folder must succeed with an existing folder.")
+        expect(result.outputs[0].value == str(root.resolve()), "Folder must emit the absolute path.")
+        expect(result.outputs[0].content_type == "directory/path", "Folder must emit directory/path.")
 
         relative = block.execute_runtime(direct_context("root", base))
-        expect(relative.status == "success", "Folder doit résoudre un chemin relatif depuis root_dir.")
-        expect(relative.outputs[0].value == str(root.resolve()), "Résolution relative Folder incorrecte.")
+        expect(relative.status == "success", "Folder must resolve a relative path from root_dir.")
+        expect(relative.outputs[0].value == str(root.resolve()), "Wrong relative resolution for Folder.")
 
         missing = block.execute_runtime(direct_context(str(base / "missing"), base))
-        expect(missing.status == "failed" and "folder_not_found" in str(missing.error), "Dossier absent non signalé.")
+        expect(missing.status == "failed" and "folder_not_found" in str(missing.error), "A missing folder was not reported.")
         invalid = block.execute_runtime(direct_context(str(regular_file), base))
         expect(
             invalid.status == "failed" and "folder_path_not_directory" in str(invalid.error),
-            "Un fichier ne doit pas être accepté comme Folder.",
+            "A file must not be accepted as a Folder.",
         )
 
         node = folder_node(str(root))
@@ -167,16 +167,16 @@ def test_direct_runtime_and_ui() -> None:
         card_html = str(render_block_node_card("folder", {"node": node}).get("html") or "")
         modal_css = (ROOT_DIR / "blocs" / "folder" / "assets" / "css" / "block_modal.css").read_text(encoding="utf-8")
         modal_js = (ROOT_DIR / "blocs" / "folder" / "assets" / "js" / "block_modal.js").read_text(encoding="utf-8")
-        expect("data-folder-list" in modal_html, "Le modal Folder doit posséder l’explorateur autonome.")
-        expect("Ajouter des fichiers" in modal_html, "Le modal Folder doit exposer l’upload.")
-        expect("Actions" not in modal_html, "Le modal Folder ne doit pas afficher une colonne d'actions.")
+        expect("data-folder-list" in modal_html, "The Folder modal must own the autonomous explorer.")
+        expect("Add files" in modal_html, "The Folder modal must expose the upload.")
+        expect("Actions" not in modal_html, "The Folder modal must not show an actions column.")
         expect(
             "explorer/rename" not in modal_js and "explorer/delete" not in modal_js,
-            "Le JavaScript Folder ne doit plus exposer renommer ou supprimer.",
+            "The Folder JavaScript must no longer expose rename or delete.",
         )
-        expect('data-block-config-field="path"' in modal_html, "Le modal doit exposer la racine durable.")
-        expect('data-block-config-field="path"' in inspector_html, "L’inspector doit exposer la racine durable.")
-        expect(root.name in card_html and "__path" not in card_html, "La node-card Folder doit afficher la racine.")
+        expect('data-block-config-field="path"' in modal_html, "The modal must expose the persistent root.")
+        expect('data-block-config-field="path"' in inspector_html, "The inspector must expose the persistent root.")
+        expect(root.name in card_html and "__path" not in card_html, "The Folder node card must show the root.")
         expect(
             '.folder-modal-panel[data-folder-panel="content"]:not([hidden])' in modal_css
             and ".folder-modal-panel[hidden]" in modal_css,
@@ -210,8 +210,8 @@ def test_bounded_explorer_and_upload() -> None:
         listing = block.handle_ui_request(node=node, route="explorer/list", method="POST", values={"relative_path": ""}, payload=payload)
         expect([entry["name"] for entry in listing["entries"]] == ["nested", "alpha.txt"], "Tri Folder incorrect.")
         nested_listing = block.handle_ui_request(node=node, route="explorer/list", method="POST", values={"relative_path": "nested"}, payload=payload)
-        expect(nested_listing.get("at_root") is False, "Un sous-dossier ne doit pas être marqué comme racine.")
-        expect(nested_listing.get("parent_path") == "", "Le parent d’un enfant direct doit pointer vers la racine.")
+        expect(nested_listing.get("at_root") is False, "A subfolder must not be marked as the root.")
+        expect(nested_listing.get("parent_path") == "", "The parent of a direct child must point to the root.")
 
         created = block.handle_ui_request(
             node=node,
@@ -243,8 +243,8 @@ def test_bounded_explorer_and_upload() -> None:
             payload=payload,
         )
         expect(uploaded.get("file", {}).get("size") == 5, "Metadata upload Folder incorrecte.")
-        expect((root / "created" / "note.txt").read_bytes() == b"first", "Contenu uploadé incorrect.")
-        expect(not list((root / "created").glob(".bloxsmith-upload-*")), "Le fichier temporaire atomique doit disparaître.")
+        expect((root / "created" / "note.txt").read_bytes() == b"first", "Wrong uploaded content.")
+        expect(not list((root / "created").glob(".bloxsmith-upload-*")), "The atomic temporary file must disappear.")
 
         assert_folder_error(
             lambda: block.handle_ui_upload(
@@ -265,7 +265,7 @@ def test_bounded_explorer_and_upload() -> None:
             content=b"second",
             payload=payload,
         )
-        expect((root / "created" / "note.txt").read_bytes() == b"second", "Écrasement confirmé non appliqué.")
+        expect((root / "created" / "note.txt").read_bytes() == b"second", "A confirmed overwrite was not applied.")
 
         for unsafe_path in ("../outside", str(outside.resolve())):
             assert_folder_error(
@@ -336,7 +336,7 @@ def multipart_upload(server, node: dict, *, filename: str, content: bytes) -> di
         headers={"Content-Type": f"multipart/form-data; boundary={boundary}"},
     )
     with urlopen(request, timeout=10) as response:
-        expect(response.status == 201, "L’endpoint multipart Folder doit répondre 201.")
+        expect(response.status == 201, "The Folder multipart endpoint must answer 201.")
         return json.loads(response.read().decode("utf-8"))
 
 
@@ -344,7 +344,7 @@ def test_http_upload_and_runtime_modes() -> None:
     '''TC4/TC6 - Validate generic multipart dispatch and both graph runtimes.'''
 
     with isolated_server() as server:
-        # Les surfaces sont des assets de release : le bundled kind n'en sert aucun.
+        # Surfaces are release assets: a bundled kind serves none of them.
         model = install_test_package(server, "folder")
         key = quote(release_key(model), safe="")
         served = lambda payload, suffix: next(
@@ -355,7 +355,7 @@ def test_http_upload_and_runtime_modes() -> None:
         node = folder_node(str(root))
         uploaded = multipart_upload(server, node, filename="from-browser.txt", content=b"browser")
         expect(uploaded.get("ok") is True, "L’upload multipart Folder doit réussir.")
-        expect((root / "from-browser.txt").read_bytes() == b"browser", "L’endpoint doit écrire dans la racine Folder.")
+        expect((root / "from-browser.txt").read_bytes() == b"browser", "The endpoint must write inside the Folder root.")
 
         invalid_payload = json.dumps({"node": node, "values": {"relative_path": "../"}}).encode("utf-8")
         invalid_request = Request(
@@ -368,10 +368,10 @@ def test_http_upload_and_runtime_modes() -> None:
             urlopen(invalid_request, timeout=10)
         except HTTPError as exc:
             error_payload = json.loads(exc.read().decode("utf-8"))
-            expect(exc.code == 400, "Une traversée Folder doit répondre HTTP 400.")
-            expect("folder_path_outside_root" in str(error_payload.get("error")), "Erreur HTTP Folder non structurée.")
+            expect(exc.code == 400, "A Folder traversal must answer HTTP 400.")
+            expect("folder_path_outside_root" in str(error_payload.get("error")), "Unstructured Folder HTTP error.")
         else:
-            raise AssertionError("La traversée HTTP Folder aurait dû être refusée.")
+            raise AssertionError("The Folder HTTP traversal should have been refused.")
 
         document = graph_payload(
             "F5 Folder runtime",
@@ -384,7 +384,7 @@ def test_http_upload_and_runtime_modes() -> None:
         for runtime_mode in ("centralized", "zeromq_active"):
             created = create_run_api(server, document, runtime_mode=runtime_mode)
             run = wait_for_run_terminal(server, str(created.get("run_id") or ""), timeout_sec=25)
-            expect(run.get("status") == "success", f"Le run Folder {runtime_mode} doit réussir.")
+            expect(run.get("status") == "success", f"The Folder {runtime_mode} run must succeed.")
             folder_output = run.get("output_values", {}).get("folder-1:1", {})
             expect(folder_output.get("value") == str(root.resolve()), f"Sortie Folder incorrecte en {runtime_mode}.")
             expect(folder_output.get("content_type") == "directory/path", f"Type Folder incorrect en {runtime_mode}.")

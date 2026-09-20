@@ -6,45 +6,45 @@
       <p class="folder-root-caption" title="{{ configured_path }}">Racine : <strong data-folder-root-label>{{ configured_path }}</strong></p>
     </div>
     <div class="modal-actions">
-      <button class="ghost-btn" data-folder-action="refresh" type="button">Rafraîchir</button>
-      <button class="ghost-btn" data-close-block-modal type="button">Fermer</button>
+      <button class="ghost-btn" data-folder-action="refresh" type="button">Refresh</button>
+      <button class="ghost-btn" data-close-block-modal type="button">Close</button>
     </div>
   </div>
 
   <div class="folder-modal-tabs" role="tablist" aria-label="Configuration Folder">
-    <button class="folder-tab is-active" data-folder-tab="content" type="button" role="tab" aria-selected="true">Contenu</button>
+    <button class="folder-tab is-active" data-folder-tab="content" type="button" role="tab" aria-selected="true">Content</button>
     <button class="folder-tab" data-folder-tab="attributes" type="button" role="tab" aria-selected="false">Attributs</button>
     <button class="folder-tab" data-folder-tab="ports" type="button" role="tab" aria-selected="false">Ports</button>
   </div>
 
   <section class="folder-modal-panel is-active" data-folder-panel="content" role="tabpanel">
     <div class="folder-explorer-toolbar">
-      <button class="ghost-btn" data-folder-action="parent" type="button" disabled>Dossier parent</button>
-      <button class="solid-btn" data-folder-action="choose-files" type="button" disabled>Ajouter des fichiers</button>
+      <button class="ghost-btn" data-folder-action="parent" type="button" disabled>Parent folder</button>
+      <button class="solid-btn" data-folder-action="choose-files" type="button" disabled>Add files</button>
       <input data-folder-upload-input type="file" multiple hidden />
       <div class="folder-create-control">
-        <input data-folder-new-directory type="text" maxlength="255" autocomplete="off" placeholder="Nouveau dossier" disabled />
-        <button class="ghost-btn" data-folder-action="create-directory" type="button" disabled>Créer</button>
+        <input data-folder-new-directory type="text" maxlength="255" autocomplete="off" placeholder="New folder" disabled />
+        <button class="ghost-btn" data-folder-action="create-directory" type="button" disabled>Create</button>
       </div>
       <label class="folder-hidden-toggle">
         <input data-folder-show-hidden type="checkbox" />
-        <span>Fichiers cachés</span>
+        <span>Hidden files</span>
       </label>
     </div>
 
-    <div class="folder-breadcrumbs" data-folder-breadcrumbs aria-label="Chemin courant"></div>
+    <div class="folder-breadcrumbs" data-folder-breadcrumbs aria-label="Current path"></div>
     <div class="folder-dropzone" data-folder-dropzone tabindex="0">
-      <span>Déposez des fichiers ici</span>
-      <small>Ils seront ajoutés dans le dossier actuellement affiché.</small>
+      <span>Drop files here</span>
+      <small>They are added to the folder currently displayed.</small>
     </div>
-    <div class="folder-status" data-folder-status aria-live="polite">Chargement du répertoire...</div>
+    <div class="folder-status" data-folder-status aria-live="polite">Loading the directory...</div>
 
-    <div class="folder-list" role="table" aria-label="Contenu du répertoire">
+    <div class="folder-list" role="table" aria-label="Directory content">
       <div class="folder-list-head" role="row">
-        <span role="columnheader">Nom</span>
+        <span role="columnheader">Name</span>
         <span role="columnheader">Type</span>
-        <span role="columnheader">Taille</span>
-        <span role="columnheader">Modification</span>
+        <span role="columnheader">Size</span>
+        <span role="columnheader">Modified</span>
       </div>
       <div class="folder-list-body" data-folder-list role="rowgroup"></div>
     </div>
@@ -53,19 +53,19 @@
   <section class="folder-modal-panel" data-folder-panel="attributes" role="tabpanel" hidden>
     <div class="folder-attributes-grid">
       <section class="ports-editor-section">
-        <div class="ports-editor-header"><span class="group-label">Identité</span></div>
+        <div class="ports-editor-header"><span class="group-label">Identity</span></div>
         {{ title_field_html }}
       </section>
       <section class="ports-editor-section">
-        <div class="ports-editor-header"><span class="group-label">Répertoire racine</span></div>
+        <div class="ports-editor-header"><span class="group-label">Root directory</span></div>
         {{ path_browser_html }}
         <div class="inspector-actions">
-          <button class="solid-btn" data-block-apply type="button" disabled>Appliquer</button>
+          <button class="solid-btn" data-block-apply type="button" disabled>Apply</button>
         </div>
-        <p class="inspector-copy">Cette racine délimite toute navigation et toute écriture de l’explorateur.</p>
+        <p class="inspector-copy">This root bounds every navigation and every write of the explorer.</p>
       </section>
       <section class="ports-editor-section">
-        <div class="ports-editor-header"><span class="group-label">Dernier état</span></div>
+        <div class="ports-editor-header"><span class="group-label">Last state</span></div>
         {{ runtime_html }}
       </section>
     </div>
