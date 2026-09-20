@@ -51,14 +51,14 @@ class FolderBlock(BlockDefinition):
         """Render the configured directory in the block-owned canvas card."""
 
         configured_path = self._configured_path(node)
-        label = Path(configured_path).name if configured_path else "Aucun répertoire"
+        label = Path(configured_path).name if configured_path else "No directory"
         return render_node_card_template(
             block=self,
             node=node,
             node_classes=["folder-node"],
             replacements={
                 "title": node.get("title") or self.default_title(),
-                "path": configured_path or "Répertoire non configuré",
+                "path": configured_path or "Directory not configured",
                 "path_label": label or configured_path,
             },
         )
@@ -71,7 +71,7 @@ class FolderBlock(BlockDefinition):
         template = template.replace(
             "{{ path_browser_html }}",
             self._path_browser(configured_path, input_id=f"{node.get('id') or 'folder'}ModalPath"),
-        ).replace("{{ configured_path }}", escape(configured_path or "Non configuré"))
+        ).replace("{{ configured_path }}", escape(configured_path or "Not configured"))
         html = self._render_generic_modal_template(template=template, node=node, payload=payload or {})
         return {
             "html": html,
@@ -212,7 +212,7 @@ class FolderBlock(BlockDefinition):
         """Return the configured folder path for worker previews."""
 
         config = getattr(node, "config", {}) if isinstance(getattr(node, "config", {}), dict) else {}
-        return str(config.get("path") or "").strip() or "répertoire non configuré"
+        return str(config.get("path") or "").strip() or "directory not configured"
 
     def execute_runtime(self, context: BlockRuntimeContext) -> BlockRuntimeResult:
         """Validate and emit the configured directory path in either runtime mode."""
@@ -286,13 +286,13 @@ class FolderBlock(BlockDefinition):
 
         return render_path_browser_control(
             input_id=input_id,
-            label="Répertoire racine",
+            label="Root directory",
             value=value,
-            placeholder="/chemin/du/repertoire",
+            placeholder="/path/to/directory",
             input_attrs='data-block-config-field="path" data-folder-path',
             select_mode="directory",
-            status="Choisissez le répertoire qui délimitera l’explorateur.",
-            use_current_label="Utiliser comme racine",
+            status="Choose the directory that will bound the explorer.",
+            use_current_label="Use as root",
         )
 
     def _listing(self, root: Path, relative_path: str) -> dict[str, Any]:

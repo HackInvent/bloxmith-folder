@@ -180,7 +180,7 @@ def test_direct_runtime_and_ui() -> None:
         expect(
             '.folder-modal-panel[data-folder-panel="content"]:not([hidden])' in modal_css
             and ".folder-modal-panel[hidden]" in modal_css,
-            "Les panneaux inactifs du modal Folder doivent rester masqués.",
+            "The inactive Folder modal panels must stay hidden.",
         )
         expect(
             "grid-template-rows: auto auto minmax(0, 1fr);" in modal_css
@@ -220,7 +220,7 @@ def test_bounded_explorer_and_upload() -> None:
             values={"relative_path": "", "name": "created"},
             payload=payload,
         )
-        expect((root / "created").is_dir() and created.get("ok") is True, "Création de dossier Folder échouée.")
+        expect((root / "created").is_dir() and created.get("ok") is True, "Folder directory creation failed.")
         for removed_route in ("explorer/rename", "explorer/delete"):
             assert_folder_error(
                 lambda removed_route=removed_route: block.handle_ui_request(
@@ -296,7 +296,7 @@ def test_bounded_explorer_and_upload() -> None:
             link = None
         if link is not None:
             listing = block.handle_ui_request(node=node, route="explorer/list", method="POST", values={"relative_path": ""}, payload=payload)
-            expect(listing.get("skipped_symlinks") == 1, "Les symlinks doivent être masqués dans Folder.")
+            expect(listing.get("skipped_symlinks") == 1, "Symlinks must stay hidden in Folder.")
             assert_folder_error(
                 lambda: block.handle_ui_request(
                     node=node,
@@ -354,7 +354,7 @@ def test_http_upload_and_runtime_modes() -> None:
         (root / "one.txt").write_text("one", encoding="utf-8")
         node = folder_node(str(root))
         uploaded = multipart_upload(server, node, filename="from-browser.txt", content=b"browser")
-        expect(uploaded.get("ok") is True, "L’upload multipart Folder doit réussir.")
+        expect(uploaded.get("ok") is True, "The Folder multipart upload must succeed.")
         expect((root / "from-browser.txt").read_bytes() == b"browser", "The endpoint must write inside the Folder root.")
 
         invalid_payload = json.dumps({"node": node, "values": {"relative_path": "../"}}).encode("utf-8")
@@ -393,7 +393,7 @@ def test_http_upload_and_runtime_modes() -> None:
             if runtime_mode == "zeromq_active":
                 expect(
                     run.get("results", {}).get("folder-1", {}).get("transport") == "zeromq_active",
-                    "Folder doit être exécuté via le worker actif générique.",
+                    "Folder must run through the generic active worker.",
                 )
 
 

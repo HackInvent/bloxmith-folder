@@ -107,7 +107,7 @@ function renderEntries(root, state) {
   if (!entries.length) {
     const empty = document.createElement("div");
     empty.className = "folder-list-empty";
-    empty.textContent = state.entries.length ? "Aucun élément visible." : "This folder is empty.";
+    empty.textContent = state.entries.length ? "No visible item." : "This folder is empty.";
     mount.append(empty);
     return;
   }
@@ -168,14 +168,14 @@ function applyListing(root, state, payload) {
   if (dropzone) dropzone.setAttribute("aria-disabled", state.writable ? "false" : "true");
   const rootLabel = root.querySelector("[data-folder-root-label]");
   if (rootLabel) {
-    rootLabel.textContent = listing.root_path || "Non configuré";
+    rootLabel.textContent = listing.root_path || "Not configured";
     rootLabel.title = listing.root_path || "";
   }
   renderBreadcrumbs(root, state);
   renderEntries(root, state);
   const suffix = listing.skipped_symlinks ? ` · ${listing.skipped_symlinks} hidden symbolic link(s)` : "";
   const access = state.writable ? "" : " · lecture seule";
-  setStatus(root, `${state.entries.length} élément(s)${suffix}${access}.`);
+  setStatus(root, `${state.entries.length} item(s)${suffix}${access}.`);
 }
 
 /** Load one root-relative directory through the generic block request API. */
@@ -221,10 +221,10 @@ async function uploadOne(root, api, state, file, overwrite = false) {
       },
     });
     applyListing(root, state, result);
-    setStatus(root, result.message || `Fichier importé : ${file.name}`);
+    setStatus(root, result.message || `File imported: ${file.name}`);
   } catch (error) {
     if (!overwrite && String(error.message || "").includes("folder_entry_exists")) {
-      const replace = window.confirm(`Le fichier « ${file.name} » existe déjà. Le remplacer ?`);
+      const replace = window.confirm(`The file "${file.name}" already exists. Replace it?`);
       if (replace) return uploadOne(root, api, state, file, true);
     }
     setStatus(root, `Import impossible : ${formatError(error)}`, true);
@@ -290,7 +290,7 @@ export function mount(root, api) {
   }
   dropzone?.addEventListener("drop", (event) => {
     if (!state.writable) {
-      setStatus(root, "Ce dossier est en lecture seule.", true);
+      setStatus(root, "This folder is read-only.", true);
       return;
     }
     void uploadFiles(root, api, state, event.dataTransfer?.files || []);
