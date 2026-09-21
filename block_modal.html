@@ -1,50 +1,50 @@
 <div class="modal-panel folder-modal" role="dialog" aria-modal="true" aria-labelledby="{{ node_id }}FolderModalTitle" data-folder-modal-root data-block-runtime-refresh="autonomous" data-node-id="{{ node_id }}" data-node-kind="{{ node_kind }}">
   <div class="modal-header folder-modal-header">
     <div>
-      <span class="panel-kicker">Bloc {{ node_kind_title }}</span>
+      <span class="panel-kicker"><span data-i18n="ui.block_kit.block">Block</span> {{ node_kind_title }}</span>
       <h2 id="{{ node_id }}FolderModalTitle">{{ node_title }}</h2>
-      <p class="folder-root-caption" title="{{ configured_path }}">Racine : <strong data-folder-root-label>{{ configured_path }}</strong></p>
+      <p class="folder-root-caption" title="{{ configured_path }}"><span data-i18n="block.folder.root_caption">Root:</span> <strong data-folder-root-label>{{ configured_path }}</strong></p>
     </div>
     <div class="modal-actions">
-      <button class="ghost-btn" data-folder-action="refresh" type="button">Refresh</button>
-      <button class="ghost-btn" data-close-block-modal type="button">Close</button>
+      <button class="ghost-btn" data-folder-action="refresh" type="button" data-i18n="block.folder.refresh">Refresh</button>
+      <button class="ghost-btn" data-close-block-modal type="button" data-i18n="ui.block_kit.close">Close</button>
     </div>
   </div>
 
   <div class="folder-modal-tabs" role="tablist" aria-label="Configuration Folder">
-    <button class="folder-tab is-active" data-folder-tab="content" type="button" role="tab" aria-selected="true">Content</button>
-    <button class="folder-tab" data-folder-tab="attributes" type="button" role="tab" aria-selected="false">Attributs</button>
-    <button class="folder-tab" data-folder-tab="ports" type="button" role="tab" aria-selected="false">Ports</button>
+    <button class="folder-tab is-active" data-folder-tab="content" type="button" role="tab" aria-selected="true" data-i18n="block.folder.tab_content">Content</button>
+    <button class="folder-tab" data-folder-tab="attributes" type="button" role="tab" aria-selected="false" data-i18n="block.folder.tab_attributes">Attributes</button>
+    <button class="folder-tab" data-folder-tab="ports" type="button" role="tab" aria-selected="false" data-i18n="ui.block_kit.ports">Ports</button>
   </div>
 
   <section class="folder-modal-panel is-active" data-folder-panel="content" role="tabpanel">
     <div class="folder-explorer-toolbar">
-      <button class="ghost-btn" data-folder-action="parent" type="button" disabled>Parent folder</button>
-      <button class="solid-btn" data-folder-action="choose-files" type="button" disabled>Add files</button>
+      <button class="ghost-btn" data-folder-action="parent" type="button" disabled data-i18n="block.folder.parent_folder">Parent folder</button>
+      <button class="solid-btn" data-folder-action="choose-files" type="button" disabled data-i18n="block.folder.add_files">Add files</button>
       <input data-folder-upload-input type="file" multiple hidden />
       <div class="folder-create-control">
-        <input data-folder-new-directory type="text" maxlength="255" autocomplete="off" placeholder="New folder" disabled />
-        <button class="ghost-btn" data-folder-action="create-directory" type="button" disabled>Create</button>
+        <input data-folder-new-directory type="text" maxlength="255" autocomplete="off" placeholder="New folder" data-i18n-placeholder="block.folder.new_folder_placeholder" disabled />
+        <button class="ghost-btn" data-folder-action="create-directory" type="button" disabled data-i18n="block.folder.create">Create</button>
       </div>
       <label class="folder-hidden-toggle">
         <input data-folder-show-hidden type="checkbox" />
-        <span>Hidden files</span>
+        <span data-i18n="block.folder.hidden_files">Hidden files</span>
       </label>
     </div>
 
     <div class="folder-breadcrumbs" data-folder-breadcrumbs aria-label="Current path"></div>
     <div class="folder-dropzone" data-folder-dropzone tabindex="0">
-      <span>Drop files here</span>
-      <small>They are added to the folder currently displayed.</small>
+      <span data-i18n="block.folder.drop_files">Drop files here</span>
+      <small data-i18n="block.folder.drop_hint">They are added to the folder currently displayed.</small>
     </div>
-    <div class="folder-status" data-folder-status aria-live="polite">Loading the directory...</div>
+    <div class="folder-status" data-folder-status aria-live="polite" data-i18n="block.folder.loading">Loading the directory...</div>
 
     <div class="folder-list" role="table" aria-label="Directory content">
       <div class="folder-list-head" role="row">
-        <span role="columnheader">Name</span>
-        <span role="columnheader">Type</span>
-        <span role="columnheader">Size</span>
-        <span role="columnheader">Modified</span>
+        <span role="columnheader" data-i18n="block.folder.column_name">Name</span>
+        <span role="columnheader" data-i18n="block.folder.column_type">Type</span>
+        <span role="columnheader" data-i18n="block.folder.column_size">Size</span>
+        <span role="columnheader" data-i18n="block.folder.column_modified">Modified</span>
       </div>
       <div class="folder-list-body" data-folder-list role="rowgroup"></div>
     </div>
@@ -53,19 +53,19 @@
   <section class="folder-modal-panel" data-folder-panel="attributes" role="tabpanel" hidden>
     <div class="folder-attributes-grid">
       <section class="ports-editor-section">
-        <div class="ports-editor-header"><span class="group-label">Identity</span></div>
+        <div class="ports-editor-header"><span class="group-label" data-i18n="ui.block_kit.identity">Identity</span></div>
         {{ title_field_html }}
       </section>
       <section class="ports-editor-section">
-        <div class="ports-editor-header"><span class="group-label">Root directory</span></div>
+        <div class="ports-editor-header"><span class="group-label" data-i18n="block.folder.root_section">Root directory</span></div>
         {{ path_browser_html }}
         <div class="inspector-actions">
-          <button class="solid-btn" data-block-apply type="button" disabled>Apply</button>
+          <button class="solid-btn" data-block-apply type="button" disabled data-i18n="ui.block_kit.apply">Apply</button>
         </div>
-        <p class="inspector-copy">This root bounds every navigation and every write of the explorer.</p>
+        <p class="inspector-copy" data-i18n="block.folder.root_hint">This root bounds every navigation and every write of the explorer.</p>
       </section>
       <section class="ports-editor-section">
-        <div class="ports-editor-header"><span class="group-label">Last state</span></div>
+        <div class="ports-editor-header"><span class="group-label" data-i18n="ui.block_kit.last_state">Last state</span></div>
         {{ runtime_html }}
       </section>
     </div>
@@ -73,7 +73,7 @@
 
   <section class="folder-modal-panel" data-folder-panel="ports" role="tabpanel" hidden>
     <section class="ports-editor-section">
-      <div class="ports-editor-header"><span class="group-label">Ports</span></div>
+      <div class="ports-editor-header"><span class="group-label" data-i18n="ui.block_kit.ports">Ports</span></div>
       {{ ports_html }}
     </section>
   </section>

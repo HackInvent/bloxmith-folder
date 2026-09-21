@@ -51,14 +51,16 @@ class FolderBlock(BlockDefinition):
         """Render the configured directory in the block-owned canvas card."""
 
         configured_path = self._configured_path(node)
-        label = Path(configured_path).name if configured_path else "No directory"
+        label = Path(configured_path).name if configured_path else self.translate(
+            "block.folder.no_directory", fallback="No directory")
         return render_node_card_template(
             block=self,
             node=node,
             node_classes=["folder-node"],
             replacements={
                 "title": node.get("title") or self.default_title(),
-                "path": configured_path or "Directory not configured",
+                "path": configured_path or self.translate(
+                    "block.folder.directory_not_configured", fallback="Directory not configured"),
                 "path_label": label or configured_path,
             },
         )
@@ -71,7 +73,8 @@ class FolderBlock(BlockDefinition):
         template = template.replace(
             "{{ path_browser_html }}",
             self._path_browser(configured_path, input_id=f"{node.get('id') or 'folder'}ModalPath"),
-        ).replace("{{ configured_path }}", escape(configured_path or "Not configured"))
+        ).replace("{{ configured_path }}", escape(configured_path or self.translate(
+            "block.folder.not_configured", fallback="Not configured")))
         html = self._render_generic_modal_template(template=template, node=node, payload=payload or {})
         return {
             "html": html,
@@ -212,7 +215,8 @@ class FolderBlock(BlockDefinition):
         """Return the configured folder path for worker previews."""
 
         config = getattr(node, "config", {}) if isinstance(getattr(node, "config", {}), dict) else {}
-        return str(config.get("path") or "").strip() or "directory not configured"
+        return str(config.get("path") or "").strip() or self.translate(
+            "block.folder.directory_not_configured", fallback="Directory not configured")
 
     def execute_runtime(self, context: BlockRuntimeContext) -> BlockRuntimeResult:
         """Validate and emit the configured directory path in either runtime mode."""

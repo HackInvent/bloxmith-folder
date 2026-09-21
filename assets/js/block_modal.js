@@ -20,6 +20,20 @@ const FOLDER_ERROR_MESSAGES = Object.freeze({
   folder_upload_action_unknown: "The requested import action is not supported.",
 });
 
+/**
+ * Resolve one block text in the active language, from the catalog of the owning release.
+ *
+ * @param {HTMLElement} element - Element inside the mounted surface, carrying its release.
+ * @param {string} key - Block catalog key.
+ * @param {object} params - Placeholder values.
+ * @param {string} fallback - Authored English text.
+ * @returns {string} Localized text.
+ */
+function text(element, key, params, fallback) {
+  const release = element?.closest?.("[data-block-release]")?.dataset?.blockRelease || "";
+  return window.CWI18n?.t?.(key, params, fallback, release) ?? fallback;
+}
+
 /** Update the explorer status line without replacing the mounted modal. */
 function setStatus(root, message, isError = false) {
   const element = root.querySelector("[data-folder-status]");
@@ -30,7 +44,7 @@ function setStatus(root, message, isError = false) {
 
 /** Return one backend Folder error as a concise user-facing message. */
 function formatError(error) {
-  const raw = String(error?.message || error || "Erreur inconnue");
+  const raw = String(error?.message || error || "Unknown error");
   const separator = raw.indexOf(":");
   const code = separator >= 0 ? raw.slice(0, separator) : raw;
   const detail = separator >= 0 ? raw.slice(separator + 1) : "";
@@ -80,7 +94,7 @@ function renderBreadcrumbs(root, state) {
     const button = document.createElement("button");
     button.type = "button";
     button.className = "folder-breadcrumb";
-    button.textContent = entry.label || "Racine";
+    button.textContent = entry.label || text(button, "block.folder.root_default_label", {}, "Root");
     button.addEventListener("click", () => void loadListing(root, state.api, state, entry.path || ""));
     mount.append(button);
     if (index < state.breadcrumbs.length - 1) {
@@ -107,7 +121,9 @@ function renderEntries(root, state) {
   if (!entries.length) {
     const empty = document.createElement("div");
     empty.className = "folder-list-empty";
-    empty.textContent = state.entries.length ? "No visible item." : "This folder is empty.";
+    empty.textContent = state.entries.length
+      ? text(empty, "block.folder.no_visible_item", {}, "No visible item.")
+      : text(empty, "block.folder.empty_folder", {}, "This folder is empty.");
     mount.append(empty);
     return;
   }
@@ -137,7 +153,9 @@ function renderEntries(root, state) {
 
     const type = document.createElement("span");
     type.setAttribute("role", "cell");
-    type.textContent = entry.kind === "directory" ? "Dossier" : "Fichier";
+    type.textContent = entry.kind === "directory"
+      ? text(type, "block.folder.kind_directory", {}, "Folder")
+      : text(type, "block.folder.kind_file", {}, "File");
     const size = document.createElement("span");
     size.setAttribute("role", "cell");
     size.textContent = formatSize(entry.size);
@@ -168,19 +186,23 @@ function applyListing(root, state, payload) {
   if (dropzone) dropzone.setAttribute("aria-disabled", state.writable ? "false" : "true");
   const rootLabel = root.querySelector("[data-folder-root-label]");
   if (rootLabel) {
-    rootLabel.textContent = listing.root_path || "Not configured";
+    rootLabel.textContent = listing.root_path || text(rootLabel, "block.folder.not_configured", {}, "Not configured");
     rootLabel.title = listing.root_path || "";
   }
   renderBreadcrumbs(root, state);
   renderEntries(root, state);
-  const suffix = listing.skipped_symlinks ? ` · ${listing.skipped_symlinks} hidden symbolic link(s)` : "";
-  const access = state.writable ? "" : " · lecture seule";
-  setStatus(root, `${state.entries.length} item(s)${suffix}${access}.`);
+  const suffix = listing.skipped_symlinks
+    ? text(root, "block.folder.hidden_symlinks", { count: listing.skipped_symlinks },
+           ` · ${listing.skipped_symlinks} hidden symbolic link(s)`)
+    : "";
+  const access = state.writable ? "" : text(root, "block.folder.read_only_suffix", {}, " · read only");
+  setStatus(root, text(root, "block.folder.entries_count",
+    { count: state.entries.length, suffix, access }, `${state.entries.length} item(s)${suffix}${access}.`));
 }
 
 /** Load one root-relative directory through the generic block request API. */
 async function loadListing(root, api, state, relativePath = state.currentPath) {
-  setStatus(root, "Chargement du contenu...");
+  setStatus(root, text(root, "block.folder.loading_content", {}, "Loading the content..."));
   try {
     const result = await api.blockRequest("explorer/list", { payload: { values: { relative_path: relativePath || "" } } });
     applyListing(root, state, result);
@@ -189,20 +211,22 @@ async function loadListing(root, api, state, relativePath = state.currentPath) {
     state.breadcrumbs = [];
     renderEntries(root, state);
     renderBreadcrumbs(root, state);
-    setStatus(root, `Exploration impossible : ${formatError(error)}`, true);
+    setStatus(root, text(root, "block.folder.error_explore", { error: formatError(error) },
+      `Browsing failed: ${formatError(error)}`), true);
   }
 }
 
 /** Execute one block-owned filesystem mutation and apply its returned listing. */
 async function mutate(root, api, state, route, values) {
-  setStatus(root, "Modification en cours...");
+  setStatus(root, text(root, "block.folder.modifying", {}, "Change in progress..."));
   try {
     const result = await api.blockRequest(route, { payload: { values } });
     applyListing(root, state, result);
     if (result.message) setStatus(root, result.message);
     return result;
   } catch (error) {
-    setStatus(root, `Modification impossible : ${formatError(error)}`, true);
+    setStatus(root, text(root, "block.folder.error_modify", { error: formatError(error) },
+      `Change failed: ${formatError(error)}`), true);
     throw error;
   }
 }
@@ -221,13 +245,16 @@ async function uploadOne(root, api, state, file, overwrite = false) {
       },
     });
     applyListing(root, state, result);
-    setStatus(root, result.message || `File imported: ${file.name}`);
+    setStatus(root, result.message || text(root, "block.folder.file_imported", { name: file.name },
+      `File imported: ${file.name}`));
   } catch (error) {
     if (!overwrite && String(error.message || "").includes("folder_entry_exists")) {
-      const replace = window.confirm(`The file "${file.name}" already exists. Replace it?`);
+      const replace = window.confirm(text(root, "block.folder.replace_confirm", { name: file.name },
+        `The file "${file.name}" already exists. Replace it?`));
       if (replace) return uploadOne(root, api, state, file, true);
     }
-    setStatus(root, `Import impossible : ${formatError(error)}`, true);
+    setStatus(root, text(root, "block.folder.error_import", { error: formatError(error) },
+      `Import failed: ${formatError(error)}`), true);
     throw error;
   }
 }
@@ -290,7 +317,7 @@ export function mount(root, api) {
   }
   dropzone?.addEventListener("drop", (event) => {
     if (!state.writable) {
-      setStatus(root, "This folder is read-only.", true);
+      setStatus(root, text(root, "block.folder.read_only", {}, "This folder is read-only."), true);
       return;
     }
     void uploadFiles(root, api, state, event.dataTransfer?.files || []);
