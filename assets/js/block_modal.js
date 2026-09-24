@@ -1,3 +1,5 @@
+import { withProperties } from "./properties.js";
+
 /**
  * Role: Mounts the Folder block read/write explorer modal.
  * File Name: block_modal.js
@@ -272,7 +274,7 @@ async function uploadFiles(root, api, state, files) {
  * @param {HTMLElement} root - Mounted Folder modal root.
  * @param {object} api - Generic block UI API including JSON and multipart requests.
  */
-export function mount(root, api) {
+function mountOwned(root, api) {
   const state = { api, currentPath: "", parentPath: "", atRoot: true, entries: [], breadcrumbs: [], writable: false };
   const uploadInput = root.querySelector("[data-folder-upload-input]");
   const dropzone = root.querySelector("[data-folder-dropzone]");
@@ -324,4 +326,9 @@ export function mount(root, api) {
   });
   setActiveTab(root, "content");
   void loadListing(root, api, state, "");
+}
+
+/** Keep the block behavior and add properties-only accessibility. */
+export function mount(root, ...args) {
+  return withProperties(mountOwned).call(this, root, ...args);
 }
